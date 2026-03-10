@@ -1,4 +1,10 @@
-import { ConnectButton, useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
+import {
+  ConnectButton,
+  useCurrentAccount,
+  useCurrentWallet,
+  useSuiClientQuery,
+  useWallets,
+} from "@mysten/dapp-kit";
 import { ToastContainer } from "react-toastify";
 import PortfolioView from "./views/PortfolioView";
 import { useEffect } from "react";
@@ -6,6 +12,8 @@ import "./App.css";
 
 function App() {
   const account = useCurrentAccount();
+  const wallets = useWallets();
+  const { isConnected, isConnecting, currentWallet } = useCurrentWallet();
 
   // Fetch SUI balance
   const { data: balanceData } = useSuiClientQuery(
@@ -43,29 +51,40 @@ function App() {
             <img src="/sui-logo.png" alt="Sui Logo" />
             <h1>Smart Contracts Code Camp Portfolio</h1>
           </div>
+          <ConnectButton />
         </div>
       </header>
 
       {/* Wallet Status Banner */}
-      {account && (
+      {(wallets.length > 0 || isConnecting || isConnected) && (
         <div className="wallet-banner">
           <div className="wallet-banner-content">
             <div className="wallet-info">
               <div className="wallet-dot"></div>
               <div>
                 <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-                  <span style={{ color: "#22c55e", fontWeight: 600 }}>Wallet Connected</span>
-                  <span style={{ color: "#64748b" }}>|</span>
-                  <span style={{ color: "#cbd5e1" }}>
-                    Balance: <strong>{getSuiBalance()} SUI</strong>
+                  <span style={{ color: "#22c55e", fontWeight: 600 }}>
+                    {isConnected ? "Wallet Connected" : isConnecting ? "Connecting Wallet" : "Wallet Detected"}
                   </span>
+                  {account && (
+                    <>
+                      <span style={{ color: "#64748b" }}>|</span>
+                      <span style={{ color: "#cbd5e1" }}>
+                        Balance: <strong>{getSuiBalance()} SUI</strong>
+                      </span>
+                    </>
+                  )}
                 </div>
                 <div style={{ color: "#86efac", fontSize: "0.875rem", marginTop: "4px" }}>
-                  {account.address.slice(0, 8)}...{account.address.slice(-6)}
+                  {account
+                    ? `${account.address.slice(0, 8)}...${account.address.slice(-6)}`
+                    : `${wallets.length} compatible wallet${wallets.length === 1 ? "" : "s"} available${currentWallet ? ` (${currentWallet.name})` : ""}`}
                 </div>
               </div>
             </div>
-            <div style={{ color: "#94a3b8", fontSize: "0.875rem" }}>Viewing your portfolio</div>
+            <div style={{ color: "#94a3b8", fontSize: "0.875rem" }}>
+              {isConnected ? "Viewing your portfolio" : "Connect your wallet to use it"}
+            </div>
           </div>
         </div>
       )}
