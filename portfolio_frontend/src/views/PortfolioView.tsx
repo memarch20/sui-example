@@ -65,7 +65,7 @@ const useMetaTags = (metadata: {
 // PORTFOLIO DATA CONFIGURATION
 // ============================================================================
 const defaultPortfolioData = {
-  name: "Rio Al-Di A. Dompol",
+  name: "Rio Al-Di A. Dompol111",
   course: "Master of Information Systems (On-going)",
   school: "University of the Philippines - Open University",
   about: "I am a fullstack developer with expertise in both frontend and backend technologies.",
